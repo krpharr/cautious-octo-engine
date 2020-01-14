@@ -1,0 +1,24 @@
+{
+  "name": "cautious-octo-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krpharr/cautious-octo-engine.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krpharr/cautious-octo-engine/issues"
+  },
+  "homepage": "https://github.com/krpharr/cautious-octo-engine#readme",
+  "dependencies": {
+    "axios": "^0.19.1",
+    "fs": "0.0.1-security",
+    "inquirer": "^7.0.3"
+  }
+}
