@@ -18,6 +18,8 @@
   "homepage": "https://github.com/krpharr/cautious-octo-engine#readme",
   "dependencies": {
     "axios": "^0.19.1",
+    "electron-html-to": "^2.6.0",
+    "electron-prebuilt": "^1.4.13",
     "fs": "0.0.1-security",
     "inquirer": "^7.0.3"
   }

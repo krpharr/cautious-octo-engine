@@ -1,6 +1,7 @@
 const fs = require("fs");
 const axios = require("axios");
 const inquirer = require("inquirer");
+const convertFactory = require('electron-html-to');
 
 inquirer
     .prompt([{
@@ -18,6 +19,7 @@ inquirer
             .get(queryUrl)
             .then(res => {
                 let {
+                    login: githubName,
                     avatar_url: image,
                     name,
                     location,
@@ -29,6 +31,8 @@ inquirer
                     following,
                     starred_url
                 } = res.data;
+
+                if (name === null) name = githubName;
 
                 let str = `${image}
                 ${name}
@@ -58,6 +62,44 @@ inquirer
                         });
                 }
                 //////////////////////////////////
+
+                let htmlStr =
+                    `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
+    <link rel="stylesheet" href="/style.css">
+    <title>${name}</title>
+</head>
+<body>
+    <img src="${image}">
+    <h1>${name}</h1>
+    <div>${location}</div>
+    <div><a href=${profile}>${profile}</a></div>
+    <div><a href=${blog}>${blog}</a></div>
+    <div>${bio}</div>
+    <div>Repositories: ${numRepos}</div>
+    <div>Followers: ${followers}</div>
+    <div>Following: ${following}</div>
+</body>
+</html>`;
+                var conversion = convertFactory({
+                    converterPath: convertFactory.converters.PDF,
+                    allowLocalFilesAccess: true
+                });
+
+                conversion({ html: htmlStr }, function(err, result) {
+                    if (err) {
+                        return console.error(err);
+                    }
+
+                    console.log(result.numberOfPages);
+                    console.log(result.logs);
+                    result.stream.pipe(fs.createWriteStream(`${githubName}.pdf`));
+                    conversion.kill(); // necessary if you use the electron-server strategy, see bellow for details
+                });
 
             });
 
