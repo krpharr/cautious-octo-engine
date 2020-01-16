@@ -12,7 +12,6 @@ inquirer
         name: "favColor"
     }])
     .then(function({ username, favColor }) {
-        // console.log(favColor);
         const queryUrl = `https://api.github.com/users/${username}`;
 
         axios
@@ -42,9 +41,7 @@ inquirer
                     try {
                         for (let pageNum = 1; pageNum <= nPages; pageNum++) {
                             let { data } = await axios.get(`https://api.github.com/users/${user}/repos?page=${pageNum}&per_page=100`);
-                            // console.log("getNumStars: repos", data);
                             numStars += loopRepos(data);
-                            // console.log("numStars", numStars);
                         }
                         return numStars;
                     } catch (err) {
@@ -60,7 +57,6 @@ inquirer
                     return n;
                 };
 
-                // let stars = 0;
                 let numPages = Math.ceil(numRepos / 100);
                 getNumStars(username, numPages).then(res => {
                     stars = res;
@@ -120,10 +116,8 @@ inquirer
                         if (err) {
                             return console.error(err);
                         }
-                        // console.log(result.numberOfPages);
-                        // console.log(result.logs);
                         result.stream.pipe(fs.createWriteStream(`${githubName}.pdf`));
-                        conversion.kill(); // necessary if you use the electron-server strategy, see bellow for details
+                        conversion.kill();
                     });
                 });
             });
