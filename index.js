@@ -33,50 +33,23 @@ inquirer
                 } = res.data;
 
                 if (name === null) name = githubName;
-
-                let str = `${image}
-                ${name}
-                ${location}
-                ${profile}
-                ${blog}
-                ${bio}
-                ${numRepos}
-                ${followers}
-                ${following}
-                ${starred_url}`;
-                // console.log(str);
-                //////////////////////////////
-                // TODO work out async on getting stars set 
-
-                // var stars = 0;
-                // for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                //     const queryRepos = `https://api.github.com/users/${username}/repos?page=${pageNum}&per_page=100`;
-                //     axios
-                //         .get(queryRepos)
-                //         .then(res => {
-                //             res.data.forEach(repo => {
-                //                 stars += parseInt(repo.stargazers_count);
-                //                 console.log(repo.name, repo.stargazers_count, stars);
-                //             })
-                //         });
-                // }
+                if (bio === null) bio = "Bio not available.";
+                if (blog === null) blog = "N/A";
+                let stars = 0;
 
                 async function getNumStars(user, nPages) {
                     let numStars = 0;
                     try {
                         for (let pageNum = 1; pageNum <= nPages; pageNum++) {
-                            // let repos = await getReposFromPage(user, pageNum);
                             let { data } = await axios.get(`https://api.github.com/users/${user}/repos?page=${pageNum}&per_page=100`);
                             // console.log("getNumStars: repos", data);
                             numStars += loopRepos(data);
                             // console.log("numStars", numStars);
                         }
                         return numStars;
-
                     } catch (err) {
                         console.log(err);
                     }
-
                 };
 
                 function loopRepos(repos) {
@@ -87,57 +60,56 @@ inquirer
                     return n;
                 };
 
-                let stars = 0;
+                // let stars = 0;
                 let numPages = Math.ceil(numRepos / 100);
                 getNumStars(username, numPages).then(res => {
                     stars = res;
                     let mapUrl = `https://www.google.com/maps/place/${location.replace(" ", "+")}`;
-
                     let htmlStr =
                         `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/css/style.css">
-        <title>${name}</title>
-    </head>
-    <body style="background-color: ${favColor};">
-        <div class="container">
-            <div class="headerStyle">
-                <img src="${image}">
-                <div class="name-location bdr">
-                    <h1  class="info">${name}</h1>
-                    <div class="info"><a href="${mapUrl}" targer="_blank"><i class="material-icons">near_me</i>${location}</a></div>
-                </div>
-            </div>
-            <div class="bio info bdr">${bio}</div>
-            <div class="links bdr">
-                <div class="info">
-                    <div class="github-user">
-                        <img class="github-logo" src="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/images/github.png">
-                        <h5>GitHub: ${username}</h5>
-                    </div>
-                    <a class="link" href="${profile}">${profile}</a>
-                </div>
-                <div class="info">
-                    <h5>Blog:</h5>
-                    <a class="link" href="${blog}">${blog}</a>
-                </div>
-            </div>
-            <div class="stats">
-                <div class="info bdr stat">Repositories: ${numRepos}</div>
-                <div class="info bdr stat">Stars: ${stars}</div>
-            </div>
-            <div class="stats">
-                <div class="info bdr stat">Followers: ${followers}</div>
-                <div class="info bdr stat">Following: ${following}</div>
-            </div>
-        </div>
-    </body>
-    </html>`;
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
+                        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                        <link rel="stylesheet" href="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/css/style.css">
+                        <title>${name}</title>
+                    </head>
+                    <body style="background-color: ${favColor};">
+                        <div class="container">
+                            <div class="headerStyle">
+                                <img src="${image}">
+                                <div class="name-location bdr">
+                                    <h1  class="info">${name}</h1>
+                                    <div class="info"><a href="${mapUrl}" targer="_blank"><i class="material-icons">near_me</i>${location}</a></div>
+                                </div>
+                            </div>
+                            <div class="bio info bdr">${bio}</div>
+                            <div class="links bdr">
+                                <div class="info">
+                                    <div class="github-user">
+                                        <img class="github-logo" src="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/images/github.png">
+                                        <h5>GitHub: ${username}</h5>
+                                    </div>
+                                    <a class="link" href="${profile}">${profile}</a>
+                                </div>
+                                <div class="info">
+                                    <h5>Blog:</h5>
+                                    <a class="link" href="${blog}">${blog}</a>
+                                </div>
+                            </div>
+                            <div class="stats">
+                                <div class="info bdr stat">Repositories: ${numRepos.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                                <div class="info bdr stat">Stars: ${stars.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                            </div>
+                            <div class="stats">
+                                <div class="info bdr stat">Followers: ${followers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                                <div class="info bdr stat">Following: ${following.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>`;
 
                     var conversion = convertFactory({
                         converterPath: convertFactory.converters.PDF,
@@ -148,18 +120,11 @@ inquirer
                         if (err) {
                             return console.error(err);
                         }
-
                         // console.log(result.numberOfPages);
                         // console.log(result.logs);
                         result.stream.pipe(fs.createWriteStream(`${githubName}.pdf`));
                         conversion.kill(); // necessary if you use the electron-server strategy, see bellow for details
                     });
                 });
-
-                //////////////////////////////////
-
-
-
             });
-
     });
