@@ -70,21 +70,37 @@ inquirer
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/css/style.css">
     <title>${name}</title>
 </head>
-<body>
-    <img src="${image}">
-    <h1>${name}</h1>
-    <div>${location}</div>
-    <div><a href=${profile}>${profile}</a></div>
-    <div><a href=${blog}>${blog}</a></div>
-    <div>${bio}</div>
-    <div>Repositories: ${numRepos}</div>
-    <div>Followers: ${followers}</div>
-    <div>Following: ${following}</div>
+<body style="background-color: ${favColor};">
+    <div class="container">
+        <div class="headerStyle">
+            <img src="${image}">
+            <div class="name-location bdr">
+                <h1  class="info">${name}</h1>
+                <div class="info">${location}</div>
+            </div>
+        </div>
+        <div class="bio info bdr">${bio}</div>
+        <div class="links">
+            <div class="info bdr"><a href=${profile}>${profile}</a></div>
+            <div class="info bdr"><a href=${blog}>${blog}</a></div>
+        </div>
+        <div class="stats">
+            <div class="info bdr">Repositories: ${numRepos}</div>
+            <div class="info bdr">Followers: ${followers}</div>
+            <div class="info bdr">Following: ${following}</div>
+            <div class="info bdr">Stars: todo</div>
+        </div>
+    </div>
 </body>
 </html>`;
+
+
+
+                // console.log(htmlStr);
+
                 var conversion = convertFactory({
                     converterPath: convertFactory.converters.PDF,
                     allowLocalFilesAccess: true
