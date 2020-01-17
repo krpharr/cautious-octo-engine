@@ -32,6 +32,7 @@ inquirer
                 } = res.data;
 
                 if (name === null) name = githubName;
+                if (location === null) location = "";
                 if (bio === null) bio = "Bio not available.";
                 if (blog === null) blog = "N/A";
                 let stars = 0;
@@ -41,7 +42,7 @@ inquirer
                     try {
                         for (let pageNum = 1; pageNum <= nPages; pageNum++) {
                             let { data } = await axios.get(`https://api.github.com/users/${user}/repos?page=${pageNum}&per_page=100`);
-                            numStars += loopRepos(data);
+                            numStars += getStarsFromRepos(data);
                         }
                         return numStars;
                     } catch (err) {
@@ -49,7 +50,7 @@ inquirer
                     }
                 };
 
-                function loopRepos(repos) {
+                function getStarsFromRepos(repos) {
                     let n = 0;
                     repos.forEach(r => {
                         n += parseInt(r.stargazers_count);
@@ -86,12 +87,12 @@ inquirer
                                 <div class="info">
                                     <div class="github-user">
                                         <img class="github-logo" src="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/images/github.png">
-                                        <h5>GitHub: ${username}</h5>
+                                        <h3>GitHub: ${username}</h3>
                                     </div>
                                     <a class="link" href="${profile}">${profile}</a>
                                 </div>
                                 <div class="info">
-                                    <h5>Blog:</h5>
+                                    <h3>Blog:</h3>
                                     <a class="link" href="${blog}">${blog}</a>
                                 </div>
                             </div>

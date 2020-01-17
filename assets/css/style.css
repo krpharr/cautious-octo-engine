@@ -54,10 +54,11 @@
 .github-logo {
     width: 16px;
     height: 16px;
+    margin-right: 8px;
 }
 
 .link {
-    font-size: 10px;
+    font-size: 14px;
 }
 
 .github-user {
