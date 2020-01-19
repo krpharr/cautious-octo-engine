@@ -7,6 +7,8 @@ const moment = require("moment");
 
 const readFileAysnc = util.promisify(fs.readFile);
 
+console.log(__dirname);
+
 
 readFileAysnc("assets/json/css-color-names.json", "utf8").then(function(data) {
 
@@ -87,7 +89,7 @@ readFileAysnc("assets/json/css-color-names.json", "utf8").then(function(data) {
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
                         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-                        <link rel="stylesheet" href="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/css/style.css">
+                        <link rel="stylesheet" href="${__dirname}/assets/css/style.css">
                         <title>${name}</title>
                     </head>
                     <body style="background-color: ${favColor};">
@@ -103,7 +105,7 @@ readFileAysnc("assets/json/css-color-names.json", "utf8").then(function(data) {
                             <div class="links bdr">
                                 <div class="info">
                                     <div class="github-user">
-                                        <img class="github-logo" src="/Users/randallpharr/bootcamp/cautious-octo-engine/assets/images/github.png">
+                                        <img class="github-logo" src="${__dirname}/assets/images/github.png">
                                         <h3>GitHub: ${username}</h3>
                                     </div>
                                     <a class="link" href="${profile}">${profile}</a>
