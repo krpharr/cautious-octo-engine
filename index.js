@@ -2,68 +2,85 @@ const fs = require("fs");
 const axios = require("axios");
 const inquirer = require("inquirer");
 const convertFactory = require('electron-html-to');
+const util = require("util");
+const moment = require("moment");
 
-inquirer
-    .prompt([{
-        message: "Enter a GitHub username",
-        name: "username"
-    }, {
-        message: "Enter your favorite color",
-        name: "favColor"
-    }])
-    .then(function({ username, favColor }) {
-        const queryUrl = `https://api.github.com/users/${username}`;
+const readFileAysnc = util.promisify(fs.readFile);
 
-        axios
-            .get(queryUrl)
-            .then(res => {
-                let {
-                    login: githubName,
-                    avatar_url: image,
-                    name,
-                    location,
-                    html_url: profile,
-                    blog,
-                    bio,
-                    public_repos: numRepos,
-                    followers,
-                    following,
-                    starred_url
-                } = res.data;
 
-                if (name === null) name = githubName;
-                if (location === null) location = "";
-                if (bio === null) bio = "Bio not available.";
-                if (blog === null) blog = "N/A";
-                let stars = 0;
+readFileAysnc("assets/json/css-color-names.json", "utf8").then(function(data) {
 
-                async function getNumStars(user, nPages) {
-                    let numStars = 0;
-                    try {
-                        for (let pageNum = 1; pageNum <= nPages; pageNum++) {
-                            let { data } = await axios.get(`https://api.github.com/users/${user}/repos?page=${pageNum}&per_page=100`);
-                            numStars += getStarsFromRepos(data);
+    const colorDict = JSON.parse(data);
+    const colorArray = Object.keys(colorDict).map(function(key) {
+        return key;
+    });
+
+    inquirer
+        .prompt([{
+            message: "Enter a GitHub username",
+            name: "username"
+        }, {
+            type: "rawlist",
+            message: "Enter your favorite color",
+            name: "favColor",
+            choices: colorArray,
+            filter: function(val) {
+                return val.toLowerCase();
+            }
+        }])
+        .then(function({ username, favColor }) {
+            const queryUrl = `https://api.github.com/users/${username}`;
+
+            axios
+                .get(queryUrl)
+                .then(res => {
+                    let {
+                        login: githubName,
+                        avatar_url: image,
+                        name,
+                        location,
+                        html_url: profile,
+                        blog,
+                        bio,
+                        public_repos: numRepos,
+                        followers,
+                        following,
+                        starred_url
+                    } = res.data;
+
+                    if (name === null) name = githubName;
+                    if (location === null) location = "";
+                    if (bio === null) bio = "Bio not available.";
+                    if (blog === null) blog = "N/A";
+                    let stars = 0;
+
+                    async function getNumStars(user, nPages) {
+                        let numStars = 0;
+                        try {
+                            for (let pageNum = 1; pageNum <= nPages; pageNum++) {
+                                let { data } = await axios.get(`https://api.github.com/users/${user}/repos?page=${pageNum}&per_page=100`);
+                                numStars += getStarsFromRepos(data);
+                            }
+                            return numStars;
+                        } catch (err) {
+                            console.log(err);
                         }
-                        return numStars;
-                    } catch (err) {
-                        console.log(err);
-                    }
-                };
+                    };
 
-                function getStarsFromRepos(repos) {
-                    let n = 0;
-                    repos.forEach(r => {
-                        n += parseInt(r.stargazers_count);
-                    });
-                    return n;
-                };
+                    function getStarsFromRepos(repos) {
+                        let n = 0;
+                        repos.forEach(r => {
+                            n += parseInt(r.stargazers_count);
+                        });
+                        return n;
+                    };
 
-                let numPages = Math.ceil(numRepos / 100);
-                getNumStars(username, numPages).then(res => {
-                    stars = res;
-                    let mapUrl = `https://www.google.com/maps/place/${location.replace(" ", "+")}`;
-                    let htmlStr =
-                        `<!DOCTYPE html>
+                    let numPages = Math.ceil(numRepos / 100);
+                    getNumStars(username, numPages).then(res => {
+                        stars = res;
+                        let mapUrl = `https://www.google.com/maps/place/${location.replace(" ", "+")}`;
+                        let htmlStr =
+                            `<!DOCTYPE html>
                     <html lang="en">
                     <head>
                         <meta charset="UTF-8">
@@ -108,18 +125,20 @@ inquirer
                     </body>
                     </html>`;
 
-                    var conversion = convertFactory({
-                        converterPath: convertFactory.converters.PDF,
-                        allowLocalFilesAccess: true
-                    });
+                        var conversion = convertFactory({
+                            converterPath: convertFactory.converters.PDF,
+                            allowLocalFilesAccess: true
+                        });
 
-                    conversion({ html: htmlStr }, function(err, result) {
-                        if (err) {
-                            return console.error(err);
-                        }
-                        result.stream.pipe(fs.createWriteStream(`${githubName}.pdf`));
-                        conversion.kill();
+                        conversion({ html: htmlStr, delay: 10 }, function(err, result) {
+                            if (err) {
+                                return console.error(err);
+                            }
+                            result.stream.pipe(fs.createWriteStream(`${githubName}.pdf`));
+                            conversion.kill();
+                            console.log(`${githubName}.pdf written to disk. - ${moment()}`);
+                        });
                     });
                 });
-            });
-    });
+        });
+});
