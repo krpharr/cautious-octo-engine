@@ -4,7 +4,7 @@ Enter a valad GitHub user name and your favorite color to quickly auto generate 
 number of respositories, followers, following, and stars.  Quickly generate PFD profiles one after the other with cautious-octo-engine!
 
 
-![alt text](https://github.com/krpharr/cautious-octo-engine/Jan-18-2020 21-31-21.gif "Logo Title Text 1")
+![alt text](Jan-18-2020.21-31-21.gif "Logo Title Text 1")
 
 
 ## installation
