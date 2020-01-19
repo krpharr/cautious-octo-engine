@@ -130,7 +130,17 @@ readFileAysnc("assets/json/css-color-names.json", "utf8").then(function(data) {
                             allowLocalFilesAccess: true
                         });
 
-                        conversion({ html: htmlStr, delay: 10 }, function(err, result) {
+                        conversion({
+                            html: htmlStr,
+                            delay: 10,
+                            pdf: {
+                                marginsType: 0,
+                                pageSize: "A4",
+                                printBackground: true,
+                                landscape: false
+                            }
+
+                        }, function(err, result) {
                             if (err) {
                                 return console.error(err);
                             }
